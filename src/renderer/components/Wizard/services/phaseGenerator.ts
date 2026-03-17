@@ -540,11 +540,11 @@ function extractResultFromStreamJson(output: string): string | null {
 /**
  * Derive SSH remote ID from config for remote file operations.
  * Returns the remote ID if SSH is enabled, otherwise undefined.
- *
- * @param sshConfig - SSH remote configuration from generation config
- * @returns Remote ID string if enabled, undefined otherwise
  */
-function deriveSshRemoteId(sshConfig: GenerationConfig['sshRemoteConfig']): string | undefined {
+export function deriveSshRemoteId(sshConfig?: {
+	enabled?: boolean;
+	remoteId?: string | null;
+}): string | undefined {
 	return sshConfig?.enabled ? (sshConfig.remoteId ?? undefined) : undefined;
 }
 
@@ -1171,15 +1171,14 @@ class PhaseGenerator {
 	 * This is a fallback for when the agent writes files directly
 	 * instead of outputting them with markers.
 	 *
-	 * @param directoryPath - Path to the directory containing Auto Run Docs
+	 * @param autoRunPath - Full path to the Auto Run Docs folder (or subfolder)
 	 * @param sshRemoteId - Optional SSH remote ID for reading from remote sessions
 	 * @returns Array of parsed documents from disk
 	 */
 	private async readDocumentsFromDisk(
-		directoryPath: string,
+		autoRunPath: string,
 		sshRemoteId?: string
 	): Promise<ParsedDocument[]> {
-		const autoRunPath = `${directoryPath}/${AUTO_RUN_FOLDER_NAME}`;
 		const documents: ParsedDocument[] = [];
 
 		try {
